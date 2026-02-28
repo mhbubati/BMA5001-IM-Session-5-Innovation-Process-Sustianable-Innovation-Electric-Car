@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚗 Tesla Innovation CHALLENGE Mode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>🚗 Tesla CHALLENGE — Mobile</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent; /* Removes grey tap flash on mobile */
         }
 
         body {
@@ -18,13 +19,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
         }
 
         .game-container {
             background: white;
             border-radius: 20px;
-            padding: 30px;
+            padding: 20px;
             max-width: 1200px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -33,15 +34,16 @@
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            margin-bottom: 5px;
+            font-size: 2em;
         }
 
         .subtitle {
             text-align: center;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             font-style: italic;
+            font-size: 0.95em;
         }
 
         .challenge-badge {
@@ -51,47 +53,51 @@
             border-radius: 30px;
             font-weight: bold;
             display: inline-block;
-            margin-bottom: 15px;
-            font-size: 1.2em;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            text-align: center;
+            width: 100%;
         }
 
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 15px;
+            padding: 12px;
             background: #f5f5f5;
             border-radius: 10px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
 
         .score-board {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: bold;
             color: #4CAF50;
         }
 
         .timer {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: bold;
             color: #ff6b6b;
         }
 
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 30px; /* Pill shape for easier tapping */
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
+            font-size: 0.95em;
+            min-width: 70px;
         }
 
         .btn-primary {
@@ -99,8 +105,9 @@
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:active {
             background: #45a049;
+            transform: scale(0.97);
         }
 
         .btn-secondary {
@@ -108,8 +115,9 @@
             color: white;
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:active {
             background: #ff5252;
+            transform: scale(0.97);
         }
 
         .btn-info {
@@ -117,57 +125,98 @@
             color: white;
         }
 
-        .btn-info:hover {
+        .btn-info:active {
             background: #138496;
+            transform: scale(0.97);
         }
 
         .game-area {
             display: flex;
-            gap: 30px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            flex-direction: column; /* Stack on mobile */
+            gap: 20px;
+            margin-top: 15px;
         }
 
         .domino-pool {
             flex: 1;
-            min-width: 300px;
             background: #f9f9f9;
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 15px;
+            padding: 15px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .domino-pool h3, .domino-chain h3 {
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: center;
+            font-size: 1.2em;
         }
 
         .domino-chain {
             flex: 2;
-            min-width: 500px;
             background: #f0f8ff;
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 15px;
+            padding: 15px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .domino-grid {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            min-height: 400px;
+            gap: 12px;
+            min-height: 350px;
         }
 
+        /* Card styles */
+        .domino-card {
+            background: white;
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 8px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            border: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            min-height: 70px;
+            cursor: pointer; /* Indicates it's tappable */
+            user-select: none; /* Prevents text selection on double-tap */
+            font-size: 1em;
+        }
+
+        .domino-card.selected {
+            border-color: #f44336;
+            background: #fff3f3;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .domino-card:active {
+            transform: scale(0.98);
+            background: #f0f0f0;
+        }
+
+        .card-example-only {
+            color: #2d3748;
+            font-size: 1em;
+            width: 100%;
+            text-align: left;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        /* Chain slot styles */
         .domino-row {
             display: flex;
             align-items: center;
             background: white;
-            border-radius: 10px;
-            padding: 10px;
+            border-radius: 15px;
+            padding: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: all 0.3s;
             position: relative;
+            min-height: 70px;
+            cursor: pointer; /* Indicates tappable */
         }
 
         .domino-row.correct {
@@ -184,24 +233,28 @@
             flex: 1;
             font-weight: bold;
             color: #4a5568;
-            padding: 15px;
+            padding: 8px;
             background: #e2e8f0;
-            border-radius: 5px;
+            border-radius: 10px;
             text-align: center;
-            font-size: 1.1em;
-            min-height: 60px;
+            font-size: 0.9em;
+            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
+            word-break: break-word;
         }
 
         .domino-example {
             flex: 2;
-            padding: 15px;
+            padding: 8px;
             text-align: left;
             color: #2d3748;
             font-style: italic;
-            border-left: 3px solid #ccc;
+            border-left: 2px solid #ccc;
+            font-size: 0.9em;
+            line-height: 1.4;
+            word-break: break-word;
         }
 
         .remove-btn {
@@ -209,73 +262,54 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            font-size: 22px;
             font-weight: bold;
             cursor: pointer;
-            margin-left: 10px;
-            transition: all 0.3s;
-        }
-
-        .remove-btn:hover {
-            background: #c82333;
-            transform: scale(1.1);
-        }
-
-        .domino-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 10px;
-            cursor: grab;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            margin-left: 8px;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            min-height: 70px;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        .domino-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            border-color: #f44336;
-            background: #fff3f3;
-        }
-
-        .domino-card.dragging {
-            opacity: 0.5;
-            cursor: grabbing;
-        }
-
-        .card-example-only {
-            color: #2d3748;
-            font-size: 1.1em;
-            width: 100%;
-            text-align: center;
-            font-style: italic;
+        .remove-btn:active {
+            background: #c82333;
+            transform: scale(0.9);
         }
 
         .empty-slot {
             background: #f0f0f0;
             border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 25px;
+            border-radius: 15px;
+            padding: 18px;
             text-align: center;
             color: #999;
-            margin-bottom: 10px;
+            margin-bottom: 0;
             width: 100%;
+            font-size: 0.95em;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-slot strong {
+            color: #666;
             font-size: 1.1em;
         }
 
         .feedback {
-            margin-top: 20px;
+            margin-top: 15px;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 15px;
             text-align: center;
             font-weight: bold;
             display: none;
+            font-size: 1.1em;
         }
 
         .feedback.success {
@@ -316,20 +350,22 @@
         .celebration-message {
             background: linear-gradient(135deg, #f44336, #b71c1c);
             color: white;
-            padding: 40px 60px;
-            border-radius: 60px;
-            font-size: 3em;
+            padding: 25px 40px;
+            border-radius: 50px;
+            font-size: 2em;
             font-weight: bold;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            animation: popIn 0.5s ease-out, float 2s infinite;
+            animation: popIn 0.5s ease-out;
             border: 4px solid gold;
+            max-width: 90%;
+            word-break: break-word;
         }
 
         .celebration-message span {
             display: block;
             font-size: 0.5em;
-            margin-top: 15px;
+            margin-top: 10px;
             color: #ffd700;
         }
 
@@ -337,11 +373,6 @@
             0% { transform: scale(0); opacity: 0; }
             80% { transform: scale(1.1); }
             100% { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
         }
 
         #confetti-canvas {
@@ -370,27 +401,32 @@
             background-color: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
+            padding: 15px;
         }
 
         .modal-content {
             background: white;
-            padding: 30px;
-            border-radius: 20px;
+            padding: 25px;
+            border-radius: 25px;
             max-width: 500px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-content h2 {
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 1.6em;
         }
 
         .modal-content p {
             color: #666;
-            margin-bottom: 15px;
-            line-height: 1.6;
+            margin-bottom: 12px;
+            line-height: 1.5;
             text-align: left;
+            font-size: 1em;
         }
 
         .modal-content ul {
@@ -402,58 +438,52 @@
         .modal-content li {
             margin-bottom: 10px;
             color: #555;
+            font-size: 1em;
         }
 
         .modal-btn {
             background: #f44336;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1.1em;
+            padding: 15px 30px;
+            border-radius: 40px;
+            font-size: 1.2em;
             cursor: pointer;
             transition: all 0.3s;
+            width: 100%;
+            font-weight: bold;
         }
 
-        .modal-btn:hover {
+        .modal-btn:active {
             background: #b71c1c;
-            transform: translateY(-2px);
+            transform: scale(0.97);
         }
 
         .final-score-popup {
             background: white;
             padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
+            border-radius: 20px;
+            margin-top: 15px;
             text-align: center;
-            border: 2px solid gold;
+            border: 3px solid gold;
         }
 
         .final-score-popup h3 {
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 1.3em;
         }
 
         .final-score-popup .score {
-            font-size: 2em;
+            font-size: 2.2em;
             color: #f44336;
             font-weight: bold;
         }
 
-        .stage-hint {
-            font-size: 0.8em;
-            color: #888;
-            margin-top: 5px;
-            font-style: normal;
-        }
-
+        /* Mobile optimisations */
         @media (max-width: 768px) {
-            .game-container {
-                padding: 15px;
-            }
-            
-            .domino-chain {
-                min-width: 100%;
+            h1 {
+                font-size: 1.8em;
             }
             
             .game-header {
@@ -461,9 +491,44 @@
                 align-items: stretch;
             }
             
+            .button-group {
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                text-align: center;
+                min-width: 80px;
+            }
+            
+            .domino-card, .domino-row {
+                padding: 15px;
+            }
+            
+            .remove-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 24px;
+            }
+            
             .celebration-message {
-                font-size: 2em;
-                padding: 20px 30px;
+                font-size: 1.5em;
+                padding: 20px 25px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 380px) {
+            .domino-stage {
+                font-size: 0.8em;
+            }
+            
+            .domino-example {
+                font-size: 0.8em;
+            }
+            
+            .card-example-only {
+                font-size: 0.9em;
             }
         }
     </style>
@@ -475,25 +540,25 @@
 
     <div id="introModal" class="modal" style="display: flex;">
         <div class="modal-content">
-            <h2>🚗 TESLA INNOVATION — CHALLENGE MODE 🔥</h2>
-            <p><strong>This is the advanced challenge!</strong> The stage names (Idea Generation, Screening, etc.) have been removed from the cards.</p>
+            <h2>🚗 TESLA — MOBILE CHALLENGE 📱</h2>
+            <p><strong>Good news — no dragging needed!</strong> Just tap to place.</p>
             <ul>
-                <li>🧩 Cards show only the <strong>action/description</strong> (e.g., "Martin Eberhard realises sports cars can be electric")</li>
-                <li>🏗️ Empty slots show the <strong>stage names</strong> — you must decide which action belongs to which stage</li>
-                <li>✅ <strong>Green</strong> = Correct match</li>
-                <li>❌ <strong>Red</strong> = Wrong — click ✖ to remove and try again</li>
-                <li>⏱️ You have <strong>5 minutes</strong></li>
-                <li>🎉 Complete the chain for confetti + sound!</li>
+                <li>👆 <strong>Tap any card</strong> in the pool to select it (it turns red)</li>
+                <li>🎯 <strong>Tap an empty slot</strong> to place the selected card</li>
+                <li>❌ <strong>Tap the ✖ button</strong> to remove a placed card</li>
+                <li>🧩 Cards show only the action — you choose the right stage</li>
+                <li>⏱️ You have <strong>10 minutes</strong> — take your time!</li>
+                <li>🎉 Complete the chain for confetti + sound</li>
             </ul>
-            <p><strong>Think you can master the innovation process?</strong></p>
-            <button class="modal-btn" onclick="startGame()">Accept the Challenge!</button>
+            <p><strong>Ready for the challenge?</strong></p>
+            <button class="modal-btn" onclick="startGame()">Tap to Start!</button>
         </div>
     </div>
 
     <div id="celebrationOverlay" class="celebration-overlay">
         <div class="celebration-message">
-            🏆 CHALLENGE COMPLETED! 🏆
-            <span>✨ TESLA MASTER INNOVATOR! ✨</span>
+            🏆 CHALLENGE COMPLETE! 🏆
+            <span>✨ TESLA MASTER ✨</span>
         </div>
     </div>
 
@@ -501,27 +566,27 @@
 
     <div class="game-container">
         <div style="text-align: center;">
-            <span class="challenge-badge">🔥 CHALLENGE MODE — No Stage Names 🔥</span>
+            <span class="challenge-badge">🔥 MOBILE CHALLENGE — 10 MINUTES 🔥</span>
         </div>
-        <h1>🚗 Tesla Innovation Challenge</h1>
-        <div class="subtitle">Match the actions to the correct innovation stages</div>
+        <h1>🚗 Tesla Innovation</h1>
+        <div class="subtitle">Tap to select • Tap to place</div>
 
         <div class="game-header">
             <div class="score-board">Score: <span id="score">0</span></div>
-            <div class="timer">Time: <span id="timer">05:00</span></div>
+            <div class="timer">Time: <span id="timer">10:00</span></div>
             <div class="button-group">
-                <button class="btn btn-info" onclick="showInstructions()">📋 Instructions</button>
+                <button class="btn btn-info" onclick="showInstructions()">📋 Help</button>
                 <button class="btn btn-secondary" onclick="resetGame()">🔄 Reset</button>
             </div>
         </div>
 
         <div class="game-area">
             <div class="domino-pool">
-                <h3>📦 Action Cards (No Stage Names)</h3>
+                <h3>📦 Tap a card to select it</h3>
                 <div id="domino-pool" class="domino-pool-cards"></div>
             </div>
             <div class="domino-chain">
-                <h3>🏗️ Innovation Stages — Place the Correct Action Here</h3>
+                <h3>🏗️ Tap an empty slot to place</h3>
                 <div id="domino-chain" class="domino-grid"></div>
             </div>
         </div>
@@ -530,14 +595,13 @@
         <div id="finalScorePopup" class="final-score-popup" style="display: none;">
             <h3>🎯 Final Score</h3>
             <div class="score" id="finalScore">0</div>
-            <p style="margin-top: 10px;">You mastered the challenge! 🌟</p>
+            <p style="margin-top: 10px;">You conquered the challenge! 🌟</p>
         </div>
     </div>
 
     <script>
         const winSound = document.getElementById('winSound');
         
-        // Innovation stages and examples — now separate
         const innovationStages = [
             "Idea Generation",
             "Screening", 
@@ -549,7 +613,6 @@
             "Evaluation & Feedback"
         ];
 
-        // Actions only — no stage names!
         const actionCards = [
             { action: "Martin Eberhard realises sports cars can be electric" },
             { action: "Feasibility study shows existing EVs are boring and slow" },
@@ -561,7 +624,6 @@
             { action: "Over‑the‑air updates improve cars after purchase" }
         ];
 
-        // The correct mapping (for checking answers)
         const correctMapping = [
             { stage: "Idea Generation", action: "Martin Eberhard realises sports cars can be electric" },
             { stage: "Screening", action: "Feasibility study shows existing EVs are boring and slow" },
@@ -574,12 +636,13 @@
         ];
 
         let score = 0;
-        let timeLeft = 300;
+        let timeLeft = 600; // 10 minutes
         let timerInterval;
         let gameActive = false;
         let gameCompleted = false;
         let shuffledActions = [];
         let currentChain = new Array(8).fill(null);
+        let selectedCardIndex = -1; // For tap-to-select
 
         let confettiCanvas = document.getElementById('confetti-canvas');
         let ctx = confettiCanvas.getContext('2d');
@@ -588,14 +651,14 @@
 
         function initGame() {
             score = 0;
-            timeLeft = 300;
+            timeLeft = 600; // 10 minutes
             currentChain = new Array(8).fill(null);
             gameCompleted = false;
+            selectedCardIndex = -1;
             updateScore();
             updateTimer();
             document.getElementById('finalScorePopup').style.display = 'none';
             
-            // Shuffle actions
             shuffledActions = [...actionCards];
             shuffleArray(shuffledActions);
             
@@ -611,7 +674,7 @@
             gameActive = true;
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(updateTimerTick, 1000);
-            showFeedback('Challenge started! Good luck! 🍀', 'info');
+            showFeedback('Game started! Tap a card to select it.', 'info');
         }
 
         function showInstructions() {
@@ -632,17 +695,37 @@
             shuffledActions.forEach((card, index) => {
                 const cardElement = document.createElement('div');
                 cardElement.className = 'domino-card';
-                cardElement.draggable = gameActive && !gameCompleted;
+                if (selectedCardIndex === index) {
+                    cardElement.classList.add('selected');
+                }
                 cardElement.setAttribute('data-action', card.action);
                 cardElement.setAttribute('data-index', index);
                 
                 cardElement.innerHTML = `<div class="card-example-only">"${card.action}"</div>`;
                 
-                cardElement.addEventListener('dragstart', handleDragStart);
-                cardElement.addEventListener('dragend', handleDragEnd);
+                cardElement.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectCard(index);
+                });
                 
                 poolElement.appendChild(cardElement);
             });
+        }
+
+        function selectCard(index) {
+            if (!gameActive || gameCompleted) {
+                showFeedback('Game is not active', 'error');
+                return;
+            }
+            
+            // Toggle selection
+            if (selectedCardIndex === index) {
+                selectedCardIndex = -1; // Deselect
+            } else {
+                selectedCardIndex = index; // Select new
+            }
+            
+            renderDominoPool(); // Re-render to show selection
         }
 
         function renderChain() {
@@ -663,25 +746,74 @@
                     slotElement.innerHTML = `
                         <div class="domino-stage">${innovationStages[i]}</div>
                         <div class="domino-example">"${action.action}"</div>
-                        <button class="remove-btn" onclick="removeFromChain(${i})" ${(gameActive && !gameCompleted) ? '' : 'disabled'}>✖</button>
+                        <button class="remove-btn" onclick="removeFromChain(${i}, event)">✖</button>
                     `;
                 } else {
                     slotElement.innerHTML = `
                         <div class="empty-slot">
-                            <strong>${innovationStages[i]}</strong><br>
-                            <span style="font-size:0.9em; color:#aaa;">Drop the matching action here</span>
+                            <strong>${innovationStages[i]}</strong>
+                            <span style="font-size:0.85em; color:#aaa; margin-top:5px; display:block;">Tap to place selected card</span>
                         </div>
                     `;
+                    
+                    // Add click handler for empty slots
+                    slotElement.addEventListener('click', (e) => {
+                        // Prevent if clicking on the remove button
+                        if (e.target.classList.contains('remove-btn')) return;
+                        placeInSlot(i);
+                    });
                 }
-                
-                slotElement.addEventListener('dragover', handleDragOver);
-                slotElement.addEventListener('drop', handleDrop);
                 
                 chainElement.appendChild(slotElement);
             }
         }
 
-        function removeFromChain(slotIndex) {
+        function placeInSlot(slotIndex) {
+            if (!gameActive || gameCompleted) {
+                showFeedback('Game is not active', 'error');
+                return;
+            }
+            
+            if (selectedCardIndex === -1) {
+                showFeedback('👆 First tap a card to select it', 'info');
+                return;
+            }
+            
+            if (currentChain[slotIndex] !== null) {
+                showFeedback('This slot already has an action. Remove it first.', 'error');
+                return;
+            }
+            
+            const cardToPlace = shuffledActions[selectedCardIndex];
+            
+            // Remove from shuffledActions
+            shuffledActions.splice(selectedCardIndex, 1);
+            
+            // Add to chain
+            currentChain[slotIndex] = cardToPlace;
+            
+            // Deselect
+            selectedCardIndex = -1;
+            
+            // Check correctness
+            if (checkActionCorrectness(cardToPlace.action, slotIndex)) {
+                score += 15;
+                showFeedback('✅ Perfect! +15 points', 'success');
+            } else {
+                showFeedback('❌ Wrong stage. You can remove it.', 'error');
+            }
+            
+            updateScore();
+            checkGameComplete();
+            renderDominoPool();
+            renderChain();
+        }
+
+        function removeFromChain(slotIndex, event) {
+            if (event) {
+                event.stopPropagation(); // Prevent triggering slot click
+            }
+            
             if (!gameActive || gameCompleted) return;
             
             const action = currentChain[slotIndex];
@@ -700,71 +832,6 @@
             return action === correctMapping[position].action;
         }
 
-        function handleDragStart(e) {
-            if (!gameActive || gameCompleted) { 
-                e.preventDefault(); 
-                return; 
-            }
-            
-            const card = e.target.closest('.domino-card');
-            if (!card) return;
-            
-            card.classList.add('dragging');
-            e.dataTransfer.setData('text/plain', JSON.stringify({
-                action: card.getAttribute('data-action'),
-                index: card.getAttribute('data-index')
-            }));
-        }
-
-        function handleDragEnd(e) {
-            const card = e.target.closest('.domino-card');
-            if (card) card.classList.remove('dragging');
-        }
-
-        function handleDragOver(e) { 
-            e.preventDefault(); 
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            
-            if (!gameActive || gameCompleted) { 
-                showFeedback('Game finished. Reset to play again.', 'error'); 
-                return; 
-            }
-            
-            const slot = e.target.closest('.domino-row');
-            if (!slot) return;
-            
-            const slotIndex = slot.getAttribute('data-slot');
-            if (slotIndex === null) return;
-            
-            if (currentChain[slotIndex] !== null) {
-                showFeedback('This slot already has an action. Remove it first.', 'error');
-                return;
-            }
-            
-            const cardData = JSON.parse(e.dataTransfer.getData('text/plain'));
-            
-            const cardIndex = shuffledActions.findIndex(c => c.action === cardData.action);
-            if (cardIndex === -1) return;
-            
-            const [movedAction] = shuffledActions.splice(cardIndex, 1);
-            currentChain[slotIndex] = movedAction;
-            
-            if (checkActionCorrectness(movedAction.action, slotIndex)) {
-                score += 15; // Extra points for challenge mode!
-                showFeedback('✅ Perfect! +15 points', 'success');
-            } else {
-                showFeedback('❌ Wrong stage. You can remove it and try again.', 'error');
-            }
-            
-            updateScore();
-            checkGameComplete();
-            renderDominoPool();
-            renderChain();
-        }
-
         function checkGameComplete() {
             const allFilled = currentChain.every(slot => slot !== null);
             if (!allFilled) return;
@@ -779,7 +846,7 @@
                 clearInterval(timerInterval);
                 
                 const timeBonus = Math.floor(timeLeft / 2);
-                score += 100 + timeBonus; // Bigger bonus for challenge mode!
+                score += 100 + timeBonus;
                 updateScore();
                 
                 celebrateWin();
@@ -793,7 +860,7 @@
 
         function celebrateWin() {
             document.getElementById('celebrationOverlay').classList.add('active');
-            winSound.play();
+            winSound.play().catch(e => console.log('Sound play failed:', e));
             startConfetti();
             
             setTimeout(() => {
@@ -810,7 +877,7 @@
             confettiCanvas.height = window.innerHeight;
             confettiCanvas.classList.add('active');
             
-            for (let i = 0; i < 200; i++) { // More confetti for challenge mode!
+            for (let i = 0; i < 200; i++) {
                 confettiParticles.push({
                     x: Math.random() * confettiCanvas.width,
                     y: Math.random() * confettiCanvas.height - confettiCanvas.height,
@@ -898,6 +965,7 @@
             if (timerInterval) clearInterval(timerInterval);
             gameActive = false;
             gameCompleted = false;
+            selectedCardIndex = -1;
             stopConfetti();
             initGame();
             document.getElementById('introModal').style.display = 'flex';
