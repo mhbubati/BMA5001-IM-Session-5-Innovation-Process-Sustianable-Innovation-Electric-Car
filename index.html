@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Innovation Chain: Tesla</title>
+    <style>
+        /* Same CSS as Game 2, but with Tesla colours */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f44336 0%, #b71c1c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 1200px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .score-board {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .timer {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary { background: #4CAF50; color: white; }
+        .btn-primary:hover { background: #45a049; }
+        .btn-secondary { background: #ff6b6b; color: white; }
+        .btn-secondary:hover { background: #ff5252; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-info:hover { background: #138496; }
+        .game-area {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .domino-pool {
+            flex: 1;
+            min-width: 300px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .domino-pool h3, .domino-chain h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .domino-chain {
+            flex: 2;
+            min-width: 500px;
+            background: #f0f8ff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .domino-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 400px;
+        }
+        .domino-row {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+        .domino-row.correct { background: #d4edda; border: 2px solid #28a745; }
+        .domino-row.incorrect { background: #f8d7da; border: 2px solid #dc3545; }
+        .domino-stage {
+            flex: 1;
+            font-weight: bold;
+            color: #4a5568;
+            padding: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .domino-example {
+            flex: 2;
+            padding: 10px;
+            text-align: center;
+            color: #2d3748;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+        .remove-btn:hover { background: #c82333; transform: scale(1.1); }
+        .domino-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: grab;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .domino-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: #f44336;
+        }
+        .domino-card.dragging { opacity: 0.5; cursor: grabbing; }
+        .card-stage { font-weight: bold; color: #4a5568; }
+        .card-example { color: #718096; }
+        .empty-slot {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        .feedback.success { background: #d4edda; color: #155724; display: block; }
+        .feedback.error { background: #f8d7da; color: #721c24; display: block; }
+        .feedback.info { background: #d1ecf1; color: #0c5460; display: block; }
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .celebration-overlay.active { display: flex; }
+        .celebration-message {
+            background: linear-gradient(135deg, #f44336, #b71c1c);
+            color: white;
+            padding: 40px 60px;
+            border-radius: 60px;
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: popIn 0.5s ease-out, float 2s infinite;
+            border: 4px solid gold;
+        }
+        .celebration-message span {
+            display: block;
+            font-size: 0.5em;
+            margin-top: 15px;
+            color: #ffd700;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+        #confetti-canvas.active { display: block; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-content h2 { color: #333; margin-bottom: 20px; }
+        .modal-content p { color: #666; margin-bottom: 15px; line-height: 1.6; text-align: left; }
+        .modal-content ul { text-align: left; margin-bottom: 20px; padding-left: 20px; }
+        .modal-content li { margin-bottom: 10px; color: #555; }
+        .modal-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .modal-btn:hover { background: #b71c1c; transform: translateY(-2px); }
+        .final-score-popup {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            border: 2px solid gold;
+        }
+        .final-score-popup h3 { color: #333; margin-bottom: 10px; }
+        .final-score-popup .score { font-size: 2em; color: #f44336; font-weight: bold; }
+        @media (max-width: 768px) {
+            .game-container { padding: 15px; }
+            .domino-chain { min-width: 100%; }
+            .game-header { flex-direction: column; align-items: stretch; }
+            .celebration-message { font-size: 2em; padding: 20px 30px; }
+        }
+    </style>
+</head>
+<body>
+    <audio id="winSound" preload="auto">
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="introModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <h2>🚗 Tesla Innovation Challenge</h2>
+            <p><strong>Your mission:</strong> Build the innovation process that revolutionised the electric car.</p>
+            <ul>
+                <li>🧩 Drag cards from the pool to the chain</li>
+                <li>✅ Green = Correct match</li>
+                <li>❌ Red = Wrong — click ✖ to remove and try again</li>
+                <li>⏱️ You have <strong>5 minutes</strong></li>
+                <li>🎉 Complete the chain for a celebration with sound!</li>
+            </ul>
+            <p><strong>Ready?</strong></p>
+            <button class="modal-btn" onclick="startGame()">Let's go!</button>
+        </div>
+    </div>
+
+    <div id="celebrationOverlay" class="celebration-overlay">
+        <div class="celebration-message">
+            🏆 CHAIN COMPLETE! 🏆
+            <span>✨ TESLA INNOVATOR! ✨</span>
+        </div>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="game-container">
+        <h1>🚗 Tesla Innovation Chain</h1>
+        <div class="subtitle">From Roadster to revolution</div>
+
+        <div class="game-header">
+            <div class="score-board">Score: <span id="score">0</span></div>
+            <div class="timer">Time: <span id="timer">05:00</span></div>
+            <div class="button-group">
+                <button class="btn btn-info" onclick="showInstructions()">📋 Instructions</button>
+                <button class="btn btn-secondary" onclick="resetGame()">🔄 Reset</button>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="domino-pool">
+                <h3>📦 Domino Pool</h3>
+                <div id="domino-pool" class="domino-pool-cards"></div>
+            </div>
+            <div class="domino-chain">
+                <h3>🏗️ Innovation Chain</h3>
+                <div id="domino-chain" class="domino-grid"></div>
+            </div>
+        </div>
+
+        <div id="feedback-message" class="feedback"></div>
+        <div id="finalScorePopup" class="final-score-popup" style="display: none;">
+            <h3>🎯 Final Score</h3>
+            <div class="score" id="finalScore">0</div>
+            <p style="margin-top: 10px;">Amazing work! 🌟</p>
+        </div>
+    </div>
+
+    <script>
+        const winSound = document.getElementById('winSound');
+        const innovationStages = [
+            { stage: "Idea Generation", example: "Martin Eberhard realises sports cars can be electric" },
+            { stage: "Screening", example: "Feasibility study shows existing EVs are boring and slow" },
+            { stage: "Concept Development", example: "Designing Roadster based on Lotus Elise chassis" },
+            { stage: "Business Analysis", example: "Start with high-end, then move to mass market" },
+            { stage: "Prototyping", example: "Building and testing battery pack with 6,831 cells" },
+            { stage: "Testing", example: "Crash tests and extreme weather trials" },
+            { stage: "Commercialisation", example: "Launch of Model S in 2012 with 265-mile range" },
+            { stage: "Evaluation & Feedback", example: "Over‑the‑air updates improve cars after purchase" }
+        ];
+
+        let score = 0;
+        let timeLeft = 300;
+        let timerInterval;
+        let gameActive = false;
+        let gameCompleted = false;
+        let shuffledCards = [];
+        let currentChain = new Array(8).fill(null);
+
+        let confettiCanvas = document.getElementById('confetti-canvas');
+        let ctx = confettiCanvas.getContext('2d');
+        let confettiParticles = [];
+        let animationFrame = null;
+
+        function initGame() {
+            score = 0;
+            timeLeft = 300;
+            currentChain = new Array(8).fill(null);
+            gameCompleted = false;
+            updateScore();
+            updateTimer();
+            document.getElementById('finalScorePopup').style.display = 'none';
+            shuffledCards = [...innovationStages];
+            shuffleArray(shuffledCards);
+            renderDominoPool();
+            renderChain();
+            document.getElementById('feedback-message').style.display = 'none';
+            document.getElementById('celebrationOverlay').classList.remove('active');
+            stopConfetti();
+        }
+
+        function startGame() {
+            document.getElementById('introModal').style.display = 'none';
+            gameActive = true;
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimerTick, 1000);
+            showFeedback('Game started! Good luck! 🍀', 'info');
+        }
+
+        function showInstructions() {
+            document.getElementById('introModal').style.display = 'flex';
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function renderDominoPool() {
+            const poolElement = document.getElementById('domino-pool');
+            poolElement.innerHTML = '';
+            shuffledCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'domino-card';
+                cardElement.draggable = gameActive && !gameCompleted;
+                cardElement.setAttribute('data-stage', card.stage);
+                cardElement.setAttribute('data-example', card.example);
+                cardElement.setAttribute('data-index', index);
+                cardElement.innerHTML = `<span class="card-stage">${card.stage}</span><span class="card-example">→ ${card.example}</span>`;
+                cardElement.addEventListener('dragstart', handleDragStart);
+                cardElement.addEventListener('dragend', handleDragEnd);
+                poolElement.appendChild(cardElement);
+            });
+        }
+
+        function renderChain() {
+            const chainElement = document.getElementById('domino-chain');
+            chainElement.innerHTML = '';
+            for (let i = 0; i < currentChain.length; i++) {
+                const slotElement = document.createElement('div');
+                slotElement.className = 'domino-row';
+                slotElement.setAttribute('data-slot', i);
+                if (currentChain[i]) {
+                    const card = currentChain[i];
+                    const isCorrect = checkCardCorrectness(card, i);
+                    slotElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    slotElement.innerHTML = `
+                        <div class="domino-stage">${card.stage}</div>
+                        <div class="domino-example">${card.example}</div>
+                        <button class="remove-btn" onclick="removeFromChain(${i})" ${(gameActive && !gameCompleted) ? '' : 'disabled'}>✖</button>
+                    `;
+                } else {
+                    slotElement.innerHTML = `<div class="empty-slot">Drop card here (Slot ${i + 1})</div>`;
+                }
+                slotElement.addEventListener('dragover', handleDragOver);
+                slotElement.addEventListener('drop', handleDrop);
+                chainElement.appendChild(slotElement);
+            }
+        }
+
+        function removeFromChain(slotIndex) {
+            if (!gameActive || gameCompleted) return;
+            const card = currentChain[slotIndex];
+            if (card) {
+                shuffledCards.push(card);
+                currentChain[slotIndex] = null;
+                score = Math.max(0, score - 5);
+                updateScore();
+                showFeedback('🔄 Card returned to pool (-5 points)', 'info');
+                renderDominoPool();
+                renderChain();
+            }
+        }
+
+        function checkCardCorrectness(card, position) {
+            return card.stage === innovationStages[position].stage && card.example === innovationStages[position].example;
+        }
+
+        function handleDragStart(e) {
+            if (!gameActive || gameCompleted) { e.preventDefault(); return; }
+            const card = e.target.closest('.domino-card');
+            if (!card) return;
+            card.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                stage: card.getAttribute('data-stage'),
+                example: card.getAttribute('data-example'),
+                index: card.getAttribute('data-index')
+            }));
+        }
+
+        function handleDragEnd(e) {
+            const card = e.target.closest('.domino-card');
+            if (card) card.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) { e.preventDefault(); }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (!gameActive || gameCompleted) { showFeedback('Game finished. Reset to play again.', 'error'); return; }
+            const slot = e.target.closest('.domino-row');
+            if (!slot) return;
+            const slotIndex = slot.getAttribute('data-slot');
+            if (slotIndex === null) return;
+            if (currentChain[slotIndex] !== null) {
+                showFeedback('This slot is already filled. Remove it first.', 'error');
+                return;
+            }
+            const cardData = JSON.parse(e.dataTransfer.getData('text/plain'));
+            const cardIndex = shuffledCards.findIndex(c => c.stage === cardData.stage && c.example === cardData.example);
+            if (cardIndex === -1) return;
+            const [movedCard] = shuffledCards.splice(cardIndex, 1);
+            currentChain[slotIndex] = movedCard;
+            if (checkCardCorrectness(movedCard, slotIndex)) {
+                score += 10;
+                showFeedback('✅ Correct! +10 points', 'success');
+            } else {
+                showFeedback('❌ Wrong position. You can remove it.', 'error');
+            }
+            updateScore();
+            checkGameComplete();
+            renderDominoPool();
+            renderChain();
+        }
+
+        function checkGameComplete() {
+            const allFilled = currentChain.every(slot => slot !== null);
+            if (!allFilled) return;
+            const allCorrect = currentChain.every((card, index) => checkCardCorrectness(card, index));
+            if (allCorrect && gameActive && !gameCompleted) {
+                gameActive = false;
+                gameCompleted = true;
+                clearInterval(timerInterval);
+                const timeBonus = Math.floor(timeLeft / 2);
+                score += 50 + timeBonus;
+                updateScore();
+                celebrateWin();
+                document.getElementById('finalScore').textContent = score;
+                document.getElementById('finalScorePopup').style.display = 'block';
+                showFeedback(`🎉 PERFECT! +50 bonus +${timeBonus} speed bonus!`, 'success');
+            }
+        }
+
+        function celebrateWin() {
+            document.getElementById('celebrationOverlay').classList.add('active');
+            winSound.play();
+            startConfetti();
+            setTimeout(() => {
+                document.getElementById('celebrationOverlay').classList.remove('active');
+            }, 5000);
+            setTimeout(() => {
+                stopConfetti();
+            }, 7000);
+        }
+
+        function startConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+            confettiCanvas.classList.add('active');
+            for (let i = 0; i < 150; i++) {
+                confettiParticles.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+                    size: Math.random() * 8 + 2,
+                    speed: Math.random() * 5 + 2,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                    rotation: Math.random() * 360
+                });
+            }
+            function animateConfetti() {
+                if (!confettiCanvas.classList.contains('active')) return;
+                ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                for (let i = 0; i < confettiParticles.length; i++) {
+                    const p = confettiParticles[i];
+                    p.y += p.speed;
+                    p.rotation += 2;
+                    if (p.y > confettiCanvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * confettiCanvas.width;
+                    }
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                }
+                animationFrame = requestAnimationFrame(animateConfetti);
+            }
+            animateConfetti();
+        }
+
+        function stopConfetti() {
+            confettiCanvas.classList.remove('active');
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            confettiParticles = [];
+        }
+
+        function updateTimerTick() {
+            if (!gameActive) return;
+            timeLeft--;
+            updateTimer();
+            if (timeLeft <= 0) {
+                gameActive = false;
+                clearInterval(timerInterval);
+                showFeedback('⏰ Time\'s up! Reset to try again.', 'error');
+            }
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+
+        function showFeedback(message, type) {
+            const feedbackEl = document.getElementById('feedback-message');
+            feedbackEl.textContent = message;
+            feedbackEl.className = `feedback ${type}`;
+            setTimeout(() => { feedbackEl.style.display = 'none'; }, 3000);
+        }
+
+        function resetGame() {
+            if (timerInterval) clearInterval(timerInterval);
+            gameActive = false;
+            gameCompleted = false;
+            stopConfetti();
+            initGame();
+            document.getElementById('introModal').style.display = 'flex';
+            showFeedback('Game reset. Ready to play again!', 'info');
+        }
+
+        window.addEventListener('resize', () => {
+            if (confettiCanvas.classList.contains('active')) {
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
+            }
+        });
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>
